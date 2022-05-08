@@ -1,28 +1,16 @@
 import './css/styles.css';
 import debounce from 'lodash.debounce';
 import Notiflix from 'notiflix';
+import fetchCountries from './fetchCountries';
 
 const DEBOUNCE_DELAY = 300;
 let searchName;
-
 const inputEl = document.querySelector('#search-box');
 const conteiner = document.querySelector('.country-info');
-
-function fetchCountries(name) {
-  const url = `https://restcountries.com/v2/name/${name}?fields=name,capital,population,flags,languages`;
-  return fetch(url).then(response => {
-    if (!response.ok) {
-      throw new Error(response.status);
-    }
-    return response.json();
-  });
-}
 
 inputEl.addEventListener('input', debounce(onInputCountry, DEBOUNCE_DELAY));
 
 function onInputCountry() {
-  console.log(inputEl.value);
-
   searchName = inputEl.value.trim();
   fetchCountries(searchName)
     .then(data => {
@@ -32,7 +20,10 @@ function onInputCountry() {
     })
     .catch(error => {
       console.log(error);
-      textError();
+      clearConteiner();
+      if (searchName !== '') {
+        textError();
+      }
     });
 }
 
@@ -53,13 +44,13 @@ function createText(data) {
 function textList(data) {
   return data
     .map(({ flags, name }) => {
-      return `<li>
+      return `<li class = "box">
       <img
         src="${flags.svg}"
         alt="Macbook Air на сірому дерев'яному столі"
         width="20";
       />
-      <p>${name}</p>
+      <p class = "country">${name}</p>
     </li>`;
     })
     .join('');
@@ -68,17 +59,17 @@ function textList(data) {
 function textInfo(data) {
   return data
     .map(({ flags, name, languages, capital, population }) => {
-      return `<div>
+      return `<div class = "box">
       <img
         src="${flags.svg}"
         alt="Macbook Air на сірому дерев'яному столі"
         width="20";
       />
-      <p>${name}</p>
+      <p class = "country">${name}</p>
     </div>
-    <p>Capital: ${capital}</p>
-    <p>Population: ${population}</p>
-    <p>Languages: ${languages.map(language => language.name)}</p>
+    <p class="text_bold">Capital: <span>${capital}</span></p>
+    <p class="text_bold">Population: <span>${population}</span></p>
+    <p class="text_bold">Languages: <span>${languages.map(language => language.name)}</span></p>
     `;
     })
     .join('');
@@ -91,5 +82,3 @@ function textError() {
 function clearConteiner() {
   conteiner.innerHTML = '';
 }
-
-
