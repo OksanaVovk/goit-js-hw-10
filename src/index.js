@@ -12,6 +12,7 @@ inputEl.addEventListener('input', debounce(onInputCountry, DEBOUNCE_DELAY));
 
 function onInputCountry() {
   searchName = inputEl.value.trim();
+  console.log(searchName);
   fetchCountries(searchName)
     .then(data => {
       clearConteiner();
@@ -25,6 +26,13 @@ function onInputCountry() {
         textError();
       }
     });
+}
+removeListener();
+
+function removeListener() {
+  if (inputEl.value === '') {
+    inputEl.removeEventListener('input', onInputCountry);
+  }
 }
 
 function createText(data) {
